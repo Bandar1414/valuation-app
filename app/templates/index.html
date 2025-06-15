@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    {% include "partials/search_form.html" %}
+  </div>
+</div>
+
+{% if selected_company %}
+<div class="row mt-3">
+  <div class="col-12">
+    <ul class="nav nav-tabs" id="valuationTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="results-tab" data-bs-toggle="tab" data-bs-target="#results" type="button" role="tab">النتائج</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab">معلومات الشركة</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">تفاصيل النماذج</button>
+      </li>
+    </ul>
+    
+    <div class="tab-content" id="valuationTabsContent">
+      <div class="tab-pane fade show active" id="results" role="tabpanel">
+        {% include "partials/valuation_results.html" %}
+      </div>
+      <div class="tab-pane fade" id="company" role="tabpanel">
+        {% include "partials/company_info.html" %}
+      </div>
+      <div class="tab-pane fade" id="details" role="tabpanel">
+        <div class="card mt-3">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">تفاصيل النماذج الحسابية</h5>
+          </div>
+          <div class="card-body">
+            <!-- يمكنك إضافة تفاصيل إضافية لكل نموذج هنا -->
+            <p>سيتم عرض التفاصيل الحسابية لكل نموذج هنا في المستقبل</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+// تفعيل تبويبات Bootstrap
+var valuationTabs = new bootstrap.Tab(document.getElementById('results-tab'));
+valuationTabs.show();
+
+// إضافة تأثيرات للرسم البياني عند التمرير
+$(window).scroll(function() {
+  var scrollPos = $(window).scrollTop();
+  $('.img-fluid').css('opacity', 1 - scrollPos / 400);
+});
+</script>
+{% endblock %}

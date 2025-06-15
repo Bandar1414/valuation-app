@@ -1,0 +1,11 @@
+<!-- company_ri.html -->
+<div class="card mb-3">
+    <div class="card-header">نموذج الدخل المتبقي</div>
+    <div class="card-body">
+        <ul>
+            <li><strong>تكلفة الملكية:</strong> {{ (inputs.get('cost_of_equity', 0) * 100) | round(2) }}%</li>
+            <li><strong>النمو:</strong> {{ (inputs.get('ri_growth', 0) * 100) | round(2) }}%</li>
+        </ul>
+        <p><strong>القيمة العادلة:</strong> {{ result.get('القيمة العادلة - الدخل المتبقي', 'غير متاح') }}</p>
+    </div>
+</div>

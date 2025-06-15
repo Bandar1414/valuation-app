@@ -1,0 +1,21 @@
+<tr>
+    <td>نموذج التدفق النقدي الحر للشركة (FCFF)</td>
+    <td>
+        {% set val = result.get('القيمة العادلة - FCFF') %}
+        {% if val is not none %}{{ val | round(2) }}{% else %}غير متاح{% endif %}
+    </td>
+    <td>
+        {% set diff = result.get('الفرق - FCFF (%)') %}
+        {% if diff is not none %}
+            <span class="badge valuation-badge {% if diff > 0 %}positive{% else %}negative{% endif %}">
+                {{ diff | round(2) }}%
+            </span>
+        {% else %}غير متاح{% endif %}
+    </td>
+    <td>---</td>
+    <td>
+        WACC: {{ (inputs.get('wacc', 0) * 100) | round(2) }}%<br>
+        النمو: {{ (inputs.get('fcff_growth', 0) * 100) | round(2) }}%<br>
+        النهائي: {{ (inputs.get('terminal_growth', 0) * 100) | round(2) }}%
+    </td>
+</tr>

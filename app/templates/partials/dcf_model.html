@@ -1,0 +1,13 @@
+<h5 class="mt-4">نموذج التدفقات النقدية المخصومة</h5>
+<div class="form-group">
+    <label for="free_cash_flow">التدفقات النقدية المتوقعة:</label>
+    <input type="number" class="form-control" name="free_cash_flow" id="free_cash_flow" step="0.01" value="{{ form_data.free_cash_flow }}">
+</div>
+<div class="form-group">
+    <label for="growth_rate_dcf">معدل النمو:</label>
+    <input type="number" class="form-control" name="growth_rate_dcf" id="growth_rate_dcf" step="0.01" value="{{ form_data.growth_rate_dcf }}">
+</div>
+<div class="form-group">
+    <label for="discount_rate_dcf">معدل الخصم:</label>
+    <input type="number" class="form-control" name="discount_rate_dcf" id="discount_rate_dcf" step="0.01" value="{{ form_data.discount_rate_dcf }}">
+</div>

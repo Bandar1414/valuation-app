@@ -1,0 +1,21 @@
+<tr>
+    <td>نموذج التدفق النقدي الحر للمساهمين (FCFE)</td>
+    <td>
+        {% set val = result.get('القيمة العادلة - FCFE') %}
+        {% if val is not none %}{{ val | round(2) }}{% else %}غير متاح{% endif %}
+    </td>
+    <td>
+        {% set diff = result.get('الفرق - FCFE (%)') %}
+        {% if diff is not none %}
+            <span class="badge valuation-badge {% if diff > 0 %}positive{% else %}negative{% endif %}">
+                {{ diff | round(2) }}%
+            </span>
+        {% else %}غير متاح{% endif %}
+    </td>
+    <td>---</td>
+    <td>
+        تكلفة الملكية: {{ (inputs.get('cost_of_equity', 0) * 100) | round(2) }}%<br>
+        النمو: {{ (inputs.get('fcfe_growth', 0) * 100) | round(2) }}%
+    </td>
+</tr>
+

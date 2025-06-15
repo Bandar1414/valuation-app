@@ -1,0 +1,20 @@
+<tr>
+    <td>خصم التوزيعات (DDM)</td>
+    <td>
+        {% set val = result.get('القيمة العادلة - خصم التوزيعات (DDM)') %}
+        {% if val is not none %}{{ val | round(2) }}{% else %}غير متاح{% endif %}
+    </td>
+    <td>
+        {% set diff = result.get('الفرق - DDM (%)') %}
+        {% if diff is not none %}
+            <span class="badge valuation-badge {% if diff > 0 %}positive{% else %}negative{% endif %}">
+                {{ diff | round(2) }}%
+            </span>
+        {% else %}غير متاح{% endif %}
+    </td>
+    <td>---</td>
+    <td>
+        النمو: {{ (inputs.get('ddm_growth', 0.05) * 100) | round(2) }}%<br>
+        الخصم: {{ (inputs.get('ddm_discount', 0.10) * 100) | round(2) }}%
+    </td>
+</tr>
