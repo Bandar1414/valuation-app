@@ -1,5 +1,7 @@
 __pycache__/
-*.xlsx
-.env
 *.pyc
-.DS_Store
+.env
+*.xlsx
+*.sqlite3
+*.db
+.venv/
