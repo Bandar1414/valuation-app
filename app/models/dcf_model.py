@@ -19,3 +19,18 @@ def calculate_dcf(fcf_list, discount_rate, growth_rate, terminal_year=5):
         return round(total_value, 2)
     except:
         return None
+
+# دالة calculate الجديدة (بدون تغيير الدالة الأصلية)
+def calculate(net_income, shares_outstanding, growth_rate, discount_rate):
+    """
+    واجهة متوافقة مع النظام الحالي
+    """
+    try:
+        if None in [net_income, shares_outstanding, growth_rate, discount_rate]:
+            return None
+            
+        eps = net_income / shares_outstanding
+        return calculate_gordon(eps, growth_rate, discount_rate)  # نستخدم نفس منطق جوردون للتوافق
+    except Exception as e:
+        print(f"Error in DCF calculate: {str(e)}")
+        return None

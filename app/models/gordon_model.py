@@ -17,3 +17,10 @@ def calculate_gordon(eps, growth_rate, discount_rate):
     except Exception as e:
         print(f"Error in Gordon model: {str(e)}")
         return None
+
+# دالة calculate الجديدة (بدون تغيير الدالة الأصلية)
+def calculate(eps, growth_rate, discount_rate):
+    """
+    واجهة متوافقة مع النظام الحالي
+    """
+    return calculate_gordon(eps, growth_rate, discount_rate)
