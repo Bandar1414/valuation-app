@@ -1,0 +1,4 @@
+2025-06-16 23:20:43,507 INFO: Valuation App Startup [in C:\Users\USER\Videos\New folder\app\__init__.py:32]
+2025-06-16 23:20:58,002 ERROR: Error in valuation: name 'ComprehensiveValuation' is not defined [in C:\Users\USER\Videos\New folder\app\services\valuation_service.py:29]
+2025-06-16 23:20:58,003 INFO: Valuation results for √—«„ﬂÊ «·”⁄ÊœÌ…: {'models': {'DCF': {'error': "name 'dcf_model' is not defined"}}} [in C:\Users\USER\Videos\New folder\app\routes.py:182]
+2025-06-16 23:20:58,005 ERROR: Error processing company data: '«·ﬁÌ„… «·⁄«œ·…' [in C:\Users\USER\Videos\New folder\app\routes.py:195]

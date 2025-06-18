@@ -1,4 +1,7 @@
 from app import create_app
+import matplotlib
+matplotlib.rcParams['font.family'] = 'sans-serif'
+matplotlib.rcParams['font.sans-serif'] = ['Arial']  # أو أي خط متاح
 
 app = create_app()
 

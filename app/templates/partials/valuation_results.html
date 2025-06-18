@@ -1,38 +1,57 @@
-<div class="card mt-4">
-    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">نتائج التقييم</h5>
-        {% if company_details and 'سعر الإغلاق' in company_details %}
-        <span class="badge bg-primary">السعر الحالي: {{ company_details['سعر الإغلاق'] | format_currency('ر.س') }}</span>
-        {% endif %}
-    </div>
-    
-    {% if not result or not result.models %}
-    <div class="card-body text-center py-5">
-        <i class="bi bi-exclamation-circle text-warning fs-1"></i>
-        <h4 class="mt-3">لا توجد نتائج متاحة</h4>
-        <p class="text-muted">الرجاء التحقق من إدخال جميع البيانات المطلوبة</p>
-    </div>
-    {% else %}
-    <div class="card-body">
-        <!-- باقي الكود كما هو -->
-        <div class="row">
-            <div class="col-md-6">
-                <!-- بطاقة أفضل نموذج -->
-            </div>
-            <div class="col-md-6">
-                <!-- بطاقة أسوأ نموذج -->
-            </div>
-        </div>
-        
-        <div class="table-responsive mt-4">
-            <!-- جدول النتائج -->
-        </div>
-        
-        {% if result.models %}
-        <div class="mt-4 p-3 bg-light rounded">
-            <!-- ملخص النتائج -->
-        </div>
-        {% endif %}
-    </div>
-    {% endif %}
+<div class="table-responsive mt-4">
+    <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>النموذج</th>
+                <th>القيمة العادلة</th>
+                <th>الفرق المطلق</th>
+                <th>الفرق النسبي</th>
+                <th>التقييم</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for model_name, model_data in result.models.items() %}
+                {% set fair_value = None %}
+                {% if model_data.get('القيمة_العادلة') is not none %}
+                    {% set fair_value = model_data['القيمة_العادلة']|float %}
+                {% elif model_data.get('fair_value') is not none %}
+                    {% set fair_value = model_data['fair_value']|float %}
+                {% endif %}
+
+                {% if fair_value is not none %}
+                    {% set current_price = company_details['سعر الإغلاق']|float %}
+                    {% set diff = fair_value - current_price %}
+                    {% set percent_diff = (diff / current_price * 100) if current_price != 0 else 0 %}
+
+                    <tr>
+                        <td>
+                            {% if model_name == 'dcf' %}DCF
+                            {% elif model_name == 'gordon' %}جوردون
+                            {% elif model_name == 'residual' %}الدخل المتبقي
+                            {% elif model_name == 'relative' %}التقييم النسبي
+                            {% else %}{{ model_name }}{% endif %}
+                        </td>
+                        <td class="{% if fair_value > current_price %}text-success{% elif fair_value < current_price %}text-danger{% endif %}">
+                            {{ "%.2f"|format(fair_value) }} ر.س
+                        </td>
+                        <td class="{% if diff > 0 %}text-success{% elif diff < 0 %}text-danger{% endif %}">
+                            {{ "%+.2f"|format(diff) }} ر.س
+                        </td>
+                        <td class="{% if percent_diff > 0 %}text-success{% elif percent_diff < 0 %}text-danger{% endif %}">
+                            {{ "%+.2f"|format(percent_diff) }}%
+                        </td>
+                        <td>
+                            {% if percent_diff > 10 %}
+                                <span class="badge bg-success">مقوم بأقل من قيمته</span>
+                            {% elif percent_diff < -10 %}
+                                <span class="badge bg-danger">مقوم بأعلى من قيمته</span>
+                            {% else %}
+                                <span class="badge bg-secondary">سعره عادل</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 </div>

@@ -13,21 +13,28 @@
                 <small class="text-muted">آخر سعر: {{ company_details['سعر الإغلاق'] | format_currency('ر.س') if company_details else 'غير متاح' }}</small>
             </div>
         </div>
-        
+
         <div class="row g-3">
-            {% macro info_box(title, value, is_currency=False, is_million=False) %}
+            {% macro info_box(title, value, is_currency=False, is_million=False, special_class=None, extra_text='') %}
+            {% if value is string and 'س' in value %}
+                {% set value = (value | replace('س', '') | float * -1) %}
+            {% endif %}
             <div class="col-md-6">
                 <div class="info-box p-3 bg-light rounded border-start border-4 border-primary">
                     <small class="text-muted d-block">{{ title }}</small>
                     <h6 class="mb-0">
                         {% if value is not none %}
-                            {% if is_million %}
-                                {{ value | format_number(is_million=True) }}
-                            {% else %}
-                                {{ value | format_number }}
-                            {% endif %}
-                            {% if is_currency %} ر.س{% endif %}
-                            {% if is_million and not is_currency %} مليون{% endif %}
+                            {% set numeric_value = value | float %}
+                            <span class="
+                                {% if special_class %}
+                                    {{ special_class }}
+                                {% else %}
+                                    text-dark
+                                {% endif %}
+                            ">
+                                {{ value | format_currency('ر.س') if is_currency else value | format_number(is_million=is_million) }}
+                            </span>
+                            {{ extra_text }}
                         {% else %}
                             غير متاح
                         {% endif %}
@@ -35,14 +42,53 @@
                 </div>
             </div>
             {% endmacro %}
-            
+
             {{ info_box('سعر الإغلاق', company_details.get('سعر الإغلاق'), is_currency=True) }}
             {{ info_box('الأسهم المصدرة', company_details.get('عدد الأسهم - نص'), is_million=True) }}
             {{ info_box('القيمة السوقية', company_details.get('القيمة السوقية (ر.س بالمليون) - نص'), is_currency=True, is_million=True) }}
-            {{ info_box('صافي الدخل', company_details.get('صافي الدخل (ر.س بالمليون) - نص'), is_currency=True, is_million=True) }}
+
+            {# صافي الدخل #}
+            {% set net_income_value = company_details.get('صافي الدخل (ر.س بالمليون) - نص') %}
+            {% set net_income_num = None %}
+            {% if net_income_value is string and 'س' in net_income_value %}
+                {% set net_income_num = (net_income_value | replace('س', '') | float * -1) %}
+            {% else %}
+                {% set net_income_num = net_income_value | float if net_income_value is not none else None %}
+            {% endif %}
+            {{ info_box('صافي الدخل', net_income_num, is_currency=True, is_million=True,
+                special_class = 'text-success-light' if net_income_num is not none and net_income_num > 0 else
+                                ('text-danger' if net_income_num is not none and net_income_num < 0 else None)
+            ) }}
+
             {{ info_box('حقوق المساهمين', company_details.get('حقوق المساهمين (ر.س بالمليون) - نص'), is_currency=True, is_million=True) }}
-            {{ info_box('ربحية السهم (EPS)', company_details.get('العائد على السهم'), is_currency=True) }}
+
+            {# ربحية السهم EPS #}
+            {% set eps_value = company_details.get('العائد على السهم') %}
+            {% set eps_num = None %}
+            {% if eps_value is string and 'س' in eps_value %}
+                {% set eps_num = (eps_value | replace('س', '') | float * -1) %}
+            {% else %}
+                {% set eps_num = eps_value | float if eps_value is not none else None %}
+            {% endif %}
+            {% set eps_color_class = 'text-success-light' if eps_num is not none and eps_num > 0 else
+                                    ('text-danger' if eps_num is not none and eps_num < 0 else 'text-dark') %}
+            {{ info_box('ربحية السهم (EPS)', eps_num, is_currency=True, special_class=eps_color_class) }}
+
             {{ info_box('القيمة الدفترية', company_details.get('القيمه الدفتريه'), is_currency=True) }}
+
+            {# حساب مكرر الربحية مع التنبيهات #}
+            {% set pe = None %}
+            {% set pe_note = '' %}
+            {% if company_details.get('سعر الإغلاق') is not none and eps_num is not none and eps_num != 0 %}
+                {% set pe = (company_details.get('سعر الإغلاق') | float) / eps_num %}
+                {% if pe > 50 %}
+                    {% set pe_note = ' <small class="text-danger">مكرر ربح عالي</small>' %}
+                {% elif pe < 0 %}
+                    {% set pe_note = ' <small class="text-danger">مكرر ربحية سالب</small>' %}
+                {% endif %}
+            {% endif %}
+            {{ info_box('مكرر الربحية', pe, special_class='text-dark', extra_text=pe_note|safe) }}
+
             {{ info_box('مضاعف السعر إلى القيمة الدفترية', company_details.get('السعر / القيمه الدفتريه')) }}
         </div>
     </div>

@@ -30,11 +30,20 @@ def validate_data(df):
     return True
 
 def clean_numeric_data(df, column):
-    """تنظيف وتحويل الأعمدة الرقمية"""
+    """تنظيف وتحويل الأعمدة الرقمية مع الاحتفاظ بالقيم السالبة"""
     if column in df.columns:
         df[column] = pd.to_numeric(df[column], errors='coerce')
-        if column not in ['EBIT']:
-            df[column] = df[column].apply(lambda x: x if pd.notnull(x) and x >=0 else None)
+    return df
+
+def add_s_suffix_for_duplicate_profits(df):
+    """إضافة 'مكرر' لصافي الدخل المكرر"""
+    col = 'صافي الدخل (ر.س بالمليون)'
+    if col in df.columns:
+        duplicated_values = df[col][df[col].duplicated(keep=False) & df[col].notna()].unique()
+        
+        for val in duplicated_values:
+            mask = df[col] == val
+            df.loc[mask, col] = df.loc[mask, col].astype(str) + " (مكرر)"
     return df
 
 def load_data():
@@ -56,6 +65,8 @@ def load_data():
         
         for col in numeric_cols:
             df = clean_numeric_data(df, col)
+        
+        df = add_s_suffix_for_duplicate_profits(df)
         
         if not validate_data(df):
             print("تحذير: ملف البيانات يحتوي على مشاكل في الهيكل أو البيانات")
