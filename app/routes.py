@@ -28,7 +28,9 @@ def format_currency(value, unit='ر.س'):
         return 'غير متاح'
     try:
         num = float(value)
-        if abs(num) >= 1_000_000_000:
+        if abs(num) >= 1_000_000_000_000:
+            return f"{locale.format_string('%.2f', num / 1_000_000_000_000, grouping=True)} ترليون {unit}"
+        elif abs(num) >= 1_000_000_000:
             return f"{locale.format_string('%.2f', num / 1_000_000_000, grouping=True)} مليار {unit}"
         elif abs(num) >= 1_000_000:
             return f"{locale.format_string('%.2f', num / 1_000_000, grouping=True)} مليون {unit}"
@@ -45,7 +47,14 @@ def format_number(value, is_million=False):
         num = float(value)
         if is_million and num < 1000:
             num *= 1_000_000
-        if num.is_integer():
+
+        if abs(num) >= 1_000_000_000_000:
+            return f"{locale.format_string('%.2f', num / 1_000_000_000_000, grouping=True)} ترليون"
+        elif abs(num) >= 1_000_000_000:
+            return f"{locale.format_string('%.2f', num / 1_000_000_000, grouping=True)} مليار"
+        elif abs(num) >= 1_000_000:
+            return f"{locale.format_string('%.2f', num / 1_000_000, grouping=True)} مليون"
+        elif num.is_integer():
             return locale.format_string("%d", num, grouping=True)
         return locale.format_string("%.2f", num, grouping=True)
     except:
@@ -82,7 +91,7 @@ def index():
 
     companies = sorted(valid_companies["الشركة"].unique())
     selected_company = None
-    result = None  # تغيير القيمة الافتراضية إلى None
+    result = None
     plot_url = None
     company_details = None
 
@@ -106,22 +115,22 @@ def index():
                 "book_value": try_float(company_row.get("القيمه الدفتريه")),
             }
 
-            # حساب القيمة السوقية
             market_cap = None
             if company_data['market_price'] and company_data['shares_outstanding']:
                 market_cap = company_data['market_price'] * company_data['shares_outstanding']
 
             company_details = {
-                "الشركة": selected_company,
-                "سعر الإغلاق": company_data['market_price'],
-                "عدد الأسهم - نص": company_data['shares_outstanding'],
-                "القيمة السوقية (ر.س بالمليون) - نص": market_cap,
-                "صافي الدخل (ر.س بالمليون) - نص": company_data['net_income'],
-                "حقوق المساهمين (ر.س بالمليون) - نص": company_data['equity'],
-                "العائد على السهم": company_data['eps'],
-                "القيمه الدفتريه": company_data['book_value'],
-                "السعر / القيمه الدفتريه": safe_divide(company_data['market_price'], company_data['book_value'])
-            }
+    "الشركة": selected_company,
+    "سعر الإغلاق": company_data['market_price'],
+    "عدد الأسهم - نص": company_data['shares_outstanding'] * 1_000_000 if company_data['shares_outstanding'] else None,
+    "القيمة السوقية (ر.س بالمليون) - نص": market_cap * 1_000_000 if market_cap else None,
+    "صافي الدخل (ر.س بالمليون) - نص": company_data['net_income'] * 1_000_000 if company_data['net_income'] else None,
+    "حقوق المساهمين (ر.س بالمليون) - نص": company_data['equity'] * 1_000_000 if company_data['equity'] else None,
+    "العائد على السهم": company_data['eps'],
+    "القيمه الدفتريه": company_data['book_value'],
+    "السعر / القيمه الدفتريه": safe_divide(company_data['market_price'], company_data['book_value'])
+}
+
 
             user_inputs = {
                 "selected_models": request.form.getlist('models'),
@@ -130,7 +139,6 @@ def index():
             }
             
             result = evaluate_all_models(company_data, user_inputs)
-            print(f"نتائج التقييم: {result}")  # Debug
 
             if result and 'models' in result:
                 plot_url = generate_plot(
