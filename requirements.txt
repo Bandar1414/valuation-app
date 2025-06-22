@@ -1,6 +1,6 @@
 Flask==2.3.2
-pandas==2.0.3
-numpy==1.24.3
+pandas
+numpy
 gunicorn==20.1.0
 openpyxl==3.1.2
 matplotlib==3.7.1
