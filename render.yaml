@@ -1,0 +1,9 @@
+services:
+  your-service-name:
+    env: python  # نوع البيئة (Python)
+    buildCommand: |  # أوامر تنفيذ البناء
+      rm -rf .venv  # حذف البيئة الافتراضية القديمة إن وجدت
+      python -m venv .venv  # إنشاء بيئة جديدة
+      . .venv/bin/activate  # تفعيل البيئة (لينكس/ماك)
+      pip install --upgrade pip  # تحديث pip
+      pip install -r requirements.txt --force-reinstall  # إعادة تثبيت الحزم بدقة
