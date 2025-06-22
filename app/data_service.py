@@ -43,7 +43,9 @@ def add_s_suffix_for_duplicate_profits(df):
         
         for val in duplicated_values:
             mask = df[col] == val
-            df.loc[mask, col] = df.loc[mask, col].astype(str) + " (مكرر)"
+            df[col] = df[col].astype(str)
+            df.loc[mask, col] += " (مكرر)"
+
     return df
 
 def load_data():

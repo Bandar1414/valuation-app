@@ -1,57 +1,76 @@
 <div class="table-responsive mt-4">
-    <table class="table table-bordered text-center align-middle">
-        <thead class="table-light">
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>النموذج</th>
+        <th>القيمة العادلة</th>
+        <th>الفرق المطلق</th>
+        <th>الفرق النسبي</th>
+        <th>التقييم</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if result is defined and result.models is defined %}
+        {% for model_name, model_data in result.models.items() %}
+          {% set fair_value = None %}
+          {% if model_data.get('القيمة العادلة') is not none %}
+            {% set fair_value = model_data['القيمة العادلة']|float %}
+          {% elif model_data.get('القيمة_العادلة') is not none %}
+            {% set fair_value = model_data['القيمة_العادلة']|float %}
+          {% elif model_data.get('fair_value') is not none %}
+            {% set fair_value = model_data['fair_value']|float %}
+          {% endif %}
+
+          {% if fair_value is not none %}
+            {% set current_price = company_details.get('سعر الإغلاق', 0)|float %}
+            {% set diff = fair_value - current_price %}
+            {% set percent_diff = (diff / current_price * 100) if current_price != 0 else 0 %}
+
             <tr>
-                <th>النموذج</th>
-                <th>القيمة العادلة</th>
-                <th>الفرق المطلق</th>
-                <th>الفرق النسبي</th>
-                <th>التقييم</th>
+              <td>{{ model_name }}</td>
+              <td class="{% if fair_value > current_price %}text-success{% elif fair_value < current_price %}text-danger{% endif %}">
+                {{ "%.2f"|format(fair_value) }} ر.س
+              </td>
+              <td class="{% if diff > 0 %}text-success{% elif diff < 0 %}text-danger{% endif %}">
+                {{ "%+.2f"|format(diff) }} ر.س
+              </td>
+              <td class="{% if percent_diff > 0 %}text-success{% elif percent_diff < 0 %}text-danger{% endif %}">
+                {{ "%+.2f"|format(percent_diff) }}%
+              </td>
+              <td>
+                {% if percent_diff > 10 %}
+                  <span class="badge bg-success">مقوم بأقل من قيمته</span>
+                {% elif percent_diff < -10 %}
+                  <span class="badge bg-danger">مقوم بأعلى من قيمته</span>
+                {% else %}
+                  <span class="badge bg-secondary">سعره عادل</span>
+                {% endif %}
+
+                {# عرض مكرر المستخدم إذا موجود #}
+                {% if model_data.get('مكرر المستخدم') %}
+                  <br><small>مكرر المستخدم: {{ model_data['مكرر المستخدم'] }}</small>
+                {% endif %}
+              </td>
             </tr>
-        </thead>
-        <tbody>
-            {% for model_name, model_data in result.models.items() %}
-                {% set fair_value = None %}
-                {% if model_data.get('القيمة_العادلة') is not none %}
-                    {% set fair_value = model_data['القيمة_العادلة']|float %}
-                {% elif model_data.get('fair_value') is not none %}
-                    {% set fair_value = model_data['fair_value']|float %}
-                {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5">لا توجد بيانات للتقييم</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
 
-                {% if fair_value is not none %}
-                    {% set current_price = company_details['سعر الإغلاق']|float %}
-                    {% set diff = fair_value - current_price %}
-                    {% set percent_diff = (diff / current_price * 100) if current_price != 0 else 0 %}
-
-                    <tr>
-                        <td>
-                            {% if model_name == 'dcf' %}DCF
-                            {% elif model_name == 'gordon' %}جوردون
-                            {% elif model_name == 'residual' %}الدخل المتبقي
-                            {% elif model_name == 'relative' %}التقييم النسبي
-                            {% else %}{{ model_name }}{% endif %}
-                        </td>
-                        <td class="{% if fair_value > current_price %}text-success{% elif fair_value < current_price %}text-danger{% endif %}">
-                            {{ "%.2f"|format(fair_value) }} ر.س
-                        </td>
-                        <td class="{% if diff > 0 %}text-success{% elif diff < 0 %}text-danger{% endif %}">
-                            {{ "%+.2f"|format(diff) }} ر.س
-                        </td>
-                        <td class="{% if percent_diff > 0 %}text-success{% elif percent_diff < 0 %}text-danger{% endif %}">
-                            {{ "%+.2f"|format(percent_diff) }}%
-                        </td>
-                        <td>
-                            {% if percent_diff > 10 %}
-                                <span class="badge bg-success">مقوم بأقل من قيمته</span>
-                            {% elif percent_diff < -10 %}
-                                <span class="badge bg-danger">مقوم بأعلى من قيمته</span>
-                            {% else %}
-                                <span class="badge bg-secondary">سعره عادل</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+  <div class="text-center mt-4">
+    <a href="{{ url_for('main.download_pdf', 
+                       company=selected_company, 
+                       company_details=company_details | tojson | safe, 
+                       initial_inputs=request.form | tojson | safe, 
+                       result=result | tojson | safe) }}" 
+       class="btn btn-outline-primary">
+      <i class="bi bi-file-earmark-pdf"></i> تحميل تقرير PDF كامل
+    </a>
+</div>
+  </div>
 </div>

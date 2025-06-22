@@ -1,21 +1,14 @@
-def calculate_relative_valuation(company_data, user_inputs):
+def calculate(pe_ratio, net_income, shares_outstanding):
     """
-    تقييم نسبي باستخدام مضاعفات مثل P/E أو P/B.
+    تقييم نسبي باستخدام مكرر الربحية (P/E).
     """
     try:
-        eps = company_data.get("net_income") / company_data.get("shares_outstanding")
-        book_value_per_share = company_data.get("equity") / company_data.get("shares_outstanding")
-        market_price = company_data.get("market_price")
-
-        if not eps or not book_value_per_share or not market_price:
+        if not pe_ratio or not net_income or not shares_outstanding:
             return None
 
-        pe_ratio = market_price / eps if eps else None
-        pb_ratio = market_price / book_value_per_share if book_value_per_share else None
+        eps = net_income / shares_outstanding
+        fair_value = eps * pe_ratio
 
-        return {
-            "P/E": round(pe_ratio, 2) if pe_ratio else None,
-            "P/B": round(pb_ratio, 2) if pb_ratio else None,
-        }
+        return round(fair_value, 2)
     except Exception:
         return None

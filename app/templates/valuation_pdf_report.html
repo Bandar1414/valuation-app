@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تقرير التقييم</title>
+  <style>
+    @font-face {
+      font-family: 'Cairo';
+      src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+    }
+    
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 20px;
+      direction: rtl;
+      color: #333;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #005f73;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;  /* يصطفون أفقيًا ويتوسطون عموديًا */
+      gap: 20px;            /* مسافة بين الصورة والنص */
+    }
+    
+    .logo-container {
+      display: flex;
+      flex-direction: column;  /* عمودين داخل النص */
+      justify-content: center; /* وسط عمودياً بجانب الصورة */
+      font-size: 14px;
+      color: #005f73;
+      font-weight: 600;
+      line-height: 1.2;       /* مسافة بين السطرين */
+    }
+    
+    .logo-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .report-title {
+      text-align: center;
+      color: #005f73;
+      margin: 30px 0;
+      font-size: 28px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      page-break-inside: avoid;
+    }
+    
+    .section-title {
+      background-color: #005f73;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    
+    .info-box {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .info-label {
+      font-weight: bold;
+      color: #005f73;
+      min-width: 150px;
+    }
+    
+    .valuation-positive {
+      color: #2a9d8f;
+      font-weight: bold;
+    }
+    
+    .valuation-negative {
+      color: #e76f51;
+      font-weight: bold;
+    }
+    
+    .valuation-neutral {
+      color: #666;
+      font-weight: bold;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .disclaimer {
+      font-size: 12px;
+      color: #666;
+      margin-top: 30px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-right: 3px solid #e76f51;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-section">
+      <img src="file:///C:/Users/USER/Videos/New%20folder/app/static/images/logo.png" class="logo-img" alt="اللوغو">
+      <div class="logo-container">
+        <div>بندر العتيبي</div>
+        <div>@A1B1H</div>
+      </div>
+    </div>
+    <div>
+      <p><strong>تاريخ التقرير:</strong> {{ last_update }}</p>
+    </div>
+  </div>
+
+  <h1 class="report-title">تقرير تقييم شركة {{ selected_company }}</h1>
+
+  <!-- قسم معلومات الشركة -->
+  <div class="section">
+    <div class="section-title">معلومات الشركة الأساسية</div>
+    <div class="row">
+      {% if company_details %}
+        <div class="info-box">
+          <span class="info-label">اسم الشركة:</span>
+          <span>{{ company_details.get('الشركة', 'غير متاح') }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">سعر الإغلاق:</span>
+          <span>{{ company_details.get('سعر الإغلاق', 'غير متاح') | format_currency('ر.س') }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">عدد الأسهم:</span>
+          <span>{{ company_details.get('عدد الأسهم - نص', 'غير متاح') | format_number(is_million=True) }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">القيمة السوقية:</span>
+          <span>{{ company_details.get('القيمة السوقية (ر.س بالمليون) - نص', 'غير متاح') | format_currency('ر.س') }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">صافي الدخل:</span>
+          <span>{{ company_details.get('صافي الدخل (ر.س بالمليون) - نص', 'غير متاح') | format_currency('ر.س') }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">حقوق المساهمين:</span>
+          <span>{{ company_details.get('حقوق المساهمين (ر.س بالمليون) - نص', 'غير متاح') | format_currency('ر.س') }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">ربحية السهم (EPS):</span>
+          <span>{{ company_details.get('العائد على السهم', 'غير متاح') | format_currency('ر.س') }}</span>
+        </div>
+        <div class="info-box">
+          <span class="info-label">القيمة الدفترية:</span>
+          <span>{{ company_details.get('القيمه الدفتريه', 'غير متاح') | format_currency('ر.س') }}</span>
+        </div>
+      {% else %}
+        <p>لا توجد بيانات متاحة للشركة</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- قسم المدخلات اليدوية -->
+  {% if initial_inputs %}
+  <div class="section">
+    <div class="section-title">المدخلات اليدوية</div>
+    <table>
+      <thead>
+        <tr>
+          <th>البند</th>
+          <th>القيمة المدخلة</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if initial_inputs.get('manual_net_income') %}
+        <tr>
+          <td>صافي الدخل (ر.س بالمليون)</td>
+          <td>{{ initial_inputs.manual_net_income }}</td>
+        </tr>
+        {% endif %}
+        {% if initial_inputs.get('manual_shares_outstanding') %}
+        <tr>
+          <td>عدد الأسهم (بالمليون)</td>
+          <td>{{ initial_inputs.manual_shares_outstanding }}</td>
+        </tr>
+        {% endif %}
+        {% if initial_inputs.get('manual_equity') %}
+        <tr>
+          <td>حقوق المساهمين (ر.س بالمليون)</td>
+          <td>{{ initial_inputs.manual_equity }}</td>
+        </tr>
+        {% endif %}
+        {% if initial_inputs.get('manual_eps') %}
+        <tr>
+          <td>العائد على السهم (EPS)</td>
+          <td>{{ initial_inputs.manual_eps }}</td>
+        </tr>
+        {% endif %}
+        {% if initial_inputs.get('manual_book_value') %}
+        <tr>
+          <td>القيمة الدفترية</td>
+          <td>{{ initial_inputs.manual_book_value }}</td>
+        </tr>
+        {% endif %}
+        {% if initial_inputs.get('manual_dividends') %}
+        <tr>
+          <td>التوزيع النقدي السنوي (ر.س)</td>
+          <td>{{ initial_inputs.manual_dividends }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- قسم نتائج التقييم -->
+  <div class="section">
+    <div class="section-title">نتائج التقييم</div>
+    {% if result is defined and result.models is defined %}
+      <table>
+        <thead>
+          <tr>
+            <th>النموذج</th>
+            <th>القيمة العادلة</th>
+            <th>الفرق المطلق</th>
+            <th>الفرق النسبي</th>
+            <th>التقييم</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for model_name, model_data in result.models.items() %}
+            {% set fair_value = None %}
+            {% if model_data.get('القيمة العادلة') is not none %}
+              {% set fair_value = model_data['القيمة العادلة']|float %}
+            {% elif model_data.get('القيمة_العادلة') is not none %}
+              {% set fair_value = model_data['القيمة_العادلة']|float %}
+            {% elif model_data.get('fair_value') is not none %}
+              {% set fair_value = model_data['fair_value']|float %}
+            {% endif %}
+
+            {% if fair_value is not none %}
+              {% set current_price = company_details.get('سعر الإغلاق', 0)|float %}
+              {% set diff = fair_value - current_price %}
+              {% set percent_diff = (diff / current_price * 100) if current_price != 0 else 0 %}
+
+              <tr>
+                <td>{{ model_name }}</td>
+                <td>{{ "%.2f"|format(fair_value) }} ر.س</td>
+                <td class="{% if diff > 0 %}valuation-positive{% elif diff < 0 %}valuation-negative{% else %}valuation-neutral{% endif %}">
+                  {{ "%+.2f"|format(diff) }} ر.س
+                </td>
+                <td class="{% if percent_diff > 0 %}valuation-positive{% elif percent_diff < 0 %}valuation-negative{% else %}valuation-neutral{% endif %}">
+                  {{ "%+.2f"|format(percent_diff) }}%
+                </td>
+                <td>
+                  {% if percent_diff > 10 %}
+                    <span class="valuation-positive">مقوم بأقل من قيمته</span>
+                  {% elif percent_diff < -10 %}
+                    <span class="valuation-negative">مقوم بأعلى من قيمته</span>
+                  {% else %}
+                    <span class="valuation-neutral">سعره عادل</span>
+                  {% endif %}
+
+                  {% if model_data.get('مكرر المستخدم') %}
+                    <br><small>مكرر المستخدم: {{ model_data['مكرر المستخدم'] }}</small>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>لا توجد بيانات متاحة لنتائج التقييم</p>
+    {% endif %}
+  </div>
+
+  <!-- قسم معلمات النماذج -->
+  <div class="section">
+    <div class="section-title">معلمات النماذج المستخدمة</div>
+    <table>
+      <thead>
+        <tr>
+          <th>النموذج</th>
+          <th>المعلمة</th>
+          <th>القيمة</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if initial_inputs %}
+          {% if 'dcf_growth_rate' in initial_inputs %}
+          <tr>
+            <td>DCF</td>
+            <td>معدل النمو</td>
+            <td>{{ initial_inputs.dcf_growth_rate }}%</td>
+          </tr>
+          {% endif %}
+          {% if 'dcf_discount_rate' in initial_inputs %}
+          <tr>
+            <td>DCF</td>
+            <td>معدل الخصم</td>
+            <td>{{ initial_inputs.dcf_discount_rate }}%</td>
+          </tr>
+          {% endif %}
+          {% if 'gordon_growth_rate' in initial_inputs %}
+          <tr>
+            <td>جوردون</td>
+            <td>معدل النمو</td>
+            <td>{{ initial_inputs.gordon_growth_rate }}%</td>
+          </tr>
+          {% endif %}
+          {% if 'gordon_discount_rate' in initial_inputs %}
+          <tr>
+            <td>جوردون</td>
+            <td>معدل الخصم</td>
+            <td>{{ initial_inputs.gordon_discount_rate }}%</td>
+          </tr>
+          {% endif %}
+          {% if 'ri_growth' in initial_inputs %}
+          <tr>
+            <td>الدخل المتبقي</td>
+            <td>معدل النمو</td>
+            <td>{{ initial_inputs.ri_growth }}%</td>
+          </tr>
+          {% endif %}
+          {% if 'ri_discount' in initial_inputs %}
+          <tr>
+            <td>الدخل المتبقي</td>
+            <td>معدل الخصم</td>
+            <td>{{ initial_inputs.ri_discount }}%</td>
+          </tr>
+          {% endif %}
+          {% if 'relative_pe_ratio' in initial_inputs %}
+          <tr>
+            <td>التقييم النسبي</td>
+            <td>مضاعف السعر/الأرباح</td>
+            <td>{{ initial_inputs.relative_pe_ratio }}</td>
+          </tr>
+          {% endif %}
+        {% else %}
+          <tr>
+            <td colspan="3">لم يتم تحديد معلمات خاصة</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- قسم التنويهات -->
+  <div class="disclaimer">
+    <h3>تنويهات هامة:</h3>
+    <ul>
+      <li>هذا التقرير يقدم معادلات حسابية لحساب القيمة العادلة وفقاً لمدخلات المستخدم</li>
+      <li>هذا التقرير لا يعكس القيمة الحقيقية للشركة وإنما يساعد في حساب تقييم النماذج المالية</li>
+      <li>جميع المعلومات المالية للشركات مصدرها موقع تداول السعودية</li>
+      <li>هذا التقرير لا يقدم أي توصية شراء أو بيع للشركات</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <p>تم إنشاء هذا التقرير بواسطة تطبيق تقييم الأسهم السعودية</p>
+    <p>جميع الحقوق محفوظة &copy; {{ last_update[:4] }} - بندر العتيبي @A1B1H</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!-- نموذج الدخل المتبقي -->
+<div class="col-md-6 model-card" data-model="residual">
+  <div class="card h-100 border-residual">
+    <div class="card-header bg-residual text-white d-flex justify-content-between align-items-center">
+      <div class="form-check form-switch">
+        <input class="form-check-input model-checkbox" type="checkbox" name="models" value="residual" id="residualCheck" checked>
+        <label class="form-check-label fw-bold" for="residualCheck">نموذج الدخل المتبقي</label>
+      </div>
+      <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#residualCollapse">
+        <i class="bi bi-chevron-down"></i>
+      </button>
+    </div>
+    <div class="card-body collapse" id="residualCollapse">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">معدل النمو <span class="text-muted">(%)</span></label>
+          <input type="number" step="0.01" class="form-control" name="ri_growth" value="5">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">معدل الخصم <span class="text-muted">(%)</span></label>
+          <input type="number" step="0.01" class="form-control" name="ri_discount" value="10">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">تكلفة حقوق الملكية (اختياري) <span class="text-muted">(%)</span></label>
+          <input type="number" step="0.01" class="form-control" name="ri_cost_of_equity">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

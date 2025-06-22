@@ -1,0 +1,113 @@
+/* نظام الألوان الاحترافي لتطبيق تقييم الأسهم السعودية */
+:root {
+  /* الألوان الأساسية */
+  --primary-color: #005f73; /* أزرق/أخضر غامق */
+  --secondary-color: #6a6a6a; /* رمادي */
+  --success-color: #2a9d8f; /* أخضر ناجح */
+  --info-color: #48cae4; /* أزرق فاتح */
+  --warning-color: #e9c46a; /* أصفر تحذير */
+  --danger-color: #e76f51; /* أحمر خطر */
+  --dark-orange: #ff8c00; /* برتقالي غامق للمدخلات اليدوية */
+  
+  /* ألوان خاصة بالنماذج */
+  --dcf-color: #0a9396; /* أخضر غامق لنموذج DCF */
+  --gordon-color: #94d2bd; /* أخضر موف لنموذج جوردون */
+  --residual-color: #48cae4; /* أزرق لنموذج الدخل المتبقي */
+  --relative-color: #e9c46a; /* أصفر للتقييم النسبي */
+  
+  /* ألوان النص والخلفيات */
+  --light-text: #ffffff; /* نص أبيض */
+  --dark-text: #2b2d42; /* نص داكن */
+  --light-bg: #f8f9fa; /* خلفية فاتحة */
+  
+  /* تأثيرات وإعدادات عامة */
+  --border-radius: 10px;
+  --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease-in-out;
+}
+
+/* تنسيقات البطاقات حسب النموذج */
+.card-header.bg-primary {
+  background-color: var(--primary-color) !important;
+  color: var(--light-text) !important;
+}
+
+/* نموذج DCF - أخضر غامق */
+.card-header.bg-dcf {
+  background-color: var(--dcf-color) !important;
+  color: var(--light-text) !important;
+}
+.border-dcf {
+  border-color: var(--dcf-color) !important;
+}
+
+/* نموذج جوردون - أخضر موف */
+.card-header.bg-gordon {
+  background-color: var(--gordon-color) !important;
+  color: var(--dark-text) !important;
+}
+.border-gordon {
+  border-color: var(--gordon-color) !important;
+}
+
+/* نموذج الدخل المتبقي - أزرق */
+.card-header.bg-residual {
+  background-color: var(--residual-color) !important;
+  color: var(--light-text) !important;
+}
+.border-residual {
+  border-color: var(--residual-color) !important;
+}
+
+/* التقييم النسبي - أصفر */
+.card-header.bg-relative {
+  background-color: var(--relative-color) !important;
+  color: var(--dark-text) !important;
+}
+.border-relative {
+  border-color: var(--relative-color) !important;
+}
+
+/* المدخلات اليدوية - برتقالي غامق */
+.card-header.bg-dark-orange {
+  background-color: var(--dark-orange) !important;
+  color: var(--light-text) !important;
+}
+.border-dark-orange {
+  border-color: var(--dark-orange) !important;
+}
+
+/* الأزرار */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn-primary:hover {
+  background-color: #004c5f;
+  border-color: #004c5f;
+}
+
+/* المدخلات اليدوية */
+.manual-input {
+  background-color: #fff3e0;
+}
+.manual-input:focus {
+  border-color: var(--dark-orange);
+  box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25);
+}
+
+/* تأثيرات عامة */
+.card {
+  transition: var(--transition);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow);
+}
+
+/* التكيف مع الأجهزة المحمولة */
+@media (max-width: 768px) {
+  :root {
+    --border-radius: 8px;
+  }
+}
