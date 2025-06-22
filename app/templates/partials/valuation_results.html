@@ -46,9 +46,9 @@
                   <span class="badge bg-secondary">سعره عادل</span>
                 {% endif %}
 
-                {# عرض مكرر المستخدم إذا موجود #}
                 {% if model_data.get('مكرر المستخدم') %}
-                  <br><small>مكرر المستخدم: {{ model_data['مكرر المستخدم'] }}</small>
+                  <br>
+                  <small>مكرر المستخدم: {{ model_data['مكرر المستخدم'] }}</small>
                 {% endif %}
               </td>
             </tr>
@@ -63,14 +63,14 @@
   </table>
 
   <div class="text-center mt-4">
-    <a href="{{ url_for('main.download_pdf', 
-                       company=selected_company, 
-                       company_details=company_details | tojson | safe, 
-                       initial_inputs=request.form | tojson | safe, 
-                       result=result | tojson | safe) }}" 
-       class="btn btn-outline-primary">
-      <i class="bi bi-file-earmark-pdf"></i> تحميل تقرير PDF كامل
-    </a>
-</div>
+    <form method="POST" action="{{ url_for('main.download_pdf') }}" target="_blank">
+      <input type="hidden" name="company" value="{{ selected_company }}">
+      <input type="hidden" name="company_details" value='{{ company_details | tojson | safe }}'>
+      <input type="hidden" name="initial_inputs" value='{{ initial_inputs | tojson | safe }}'>
+      <input type="hidden" name="result" value='{{ result | tojson | safe }}'>
+      <button type="submit" class="btn btn-outline-primary">
+        <i class="bi bi-file-earmark-pdf"></i> تحميل تقرير PDF كامل
+      </button>
+    </form>
   </div>
 </div>

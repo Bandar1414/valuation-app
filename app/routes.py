@@ -11,17 +11,16 @@ import tempfile  # تم إضافة هذا فقط
 
 main_blueprint = Blueprint('main', __name__)
 
-@main_blueprint.route('/download_pdf')
+@main_blueprint.route('/download_pdf', methods=['POST'])
 def download_pdf():
     import json  # أضف هذه السطر في الأعلى إذا لم يكن موجودًا
     
     # الحصول على البيانات من الجلسة أو من النموذج
-    selected_company = request.args.get('company', '')
-    
-    # تحويل البيانات من JSON string إلى dict
-    company_details = json.loads(request.args.get('company_details', '{}').replace("'", '"'))
-    initial_inputs = json.loads(request.args.get('initial_inputs', '{}').replace("'", '"'))
-    result = json.loads(request.args.get('result', '{}').replace("'", '"'))
+    selected_company = request.form.get('company', '')
+    company_details = json.loads(request.form.get('company_details', '{}'))
+    initial_inputs = json.loads(request.form.get('initial_inputs', '{}'))
+    result = json.loads(request.form.get('result', '{}'))
+
     
     last_update = datetime.now().strftime('%Y-%m-%d %H:%M')
 
