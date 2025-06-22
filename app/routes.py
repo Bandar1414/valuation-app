@@ -42,7 +42,7 @@ def download_pdf():
         pdf_path = tmp_pdf.name
 
     # توليد PDF وحفظه في الملف المؤقت
-    HTML(string=rendered).write_pdf(target=pdf_path)
+    HTML(string=rendered, base_url=request.root_url).write_pdf(target=pdf_path)
 
     # إرسال الملف للمستخدم مع حذف الملف بعد الإرسال
     response = send_file(pdf_path, download_name=f'تقرير-تقييم-{selected_company}.pdf', as_attachment=True)
