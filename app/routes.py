@@ -1,3 +1,4 @@
+import base64
 from flask import Blueprint, render_template, request, flash, send_file
 from datetime import datetime
 import pandas as pd
@@ -41,7 +42,9 @@ def download_pdf():
         pdf_path = tmp_pdf.name
 
     # توليد PDF وحفظه في الملف المؤقت
-    HTML(string=rendered, base_url=request.root_url).write_pdf(target=pdf_path)
+    pdf = HTML(string=rendered, base_url=request.root_url).write_pdf()
+    with open(pdf_path, 'wb') as f:
+        f.write(pdf)
 
     # إرسال الملف للمستخدم مع حذف الملف بعد الإرسال
     response = send_file(pdf_path, download_name=f'تقرير-تقييم-{selected_company}.pdf', as_attachment=True)
