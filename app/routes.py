@@ -12,11 +12,11 @@ import os
 import tempfile
 from app.visitor_tracker import count_unique_visitor
 
-@app.before_request
+main_blueprint = Blueprint('main', __name__)
+
+@main_blueprint.before_request
 def track_visitors():
     count_unique_visitor()
-
-main_blueprint = Blueprint('main', __name__)
 
 @main_blueprint.route('/download_pdf', methods=['POST'])
 def download_pdf():
