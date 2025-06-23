@@ -1,24 +1,38 @@
-# app/visitor_tracker.py
-
-import json
-import os
+import sqlite3
 from flask import request
 
-VISITORS_FILE = "visitors.json"
+DB_FILE = 'visitors.db'
 
-def load_visitors():
-    if os.path.exists(VISITORS_FILE):
-        with open(VISITORS_FILE, "r") as f:
-            return json.load(f)
-    return {}
+# إنشاء الجدول لو لم يكن موجودًا
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS visitors (
+            ip TEXT PRIMARY KEY,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-def save_visitors(data):
-    with open(VISITORS_FILE, "w") as f:
-        json.dump(data, f)
-
+# تسجيل الزائر الفريد
 def count_unique_visitor():
     ip = request.remote_addr
-    visitors = load_visitors()
-    if ip not in visitors:
-        visitors[ip] = True
-        save_visitors(visitors)
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('SELECT 1 FROM visitors WHERE ip = ?', (ip,))
+    exists = cursor.fetchone()
+    if not exists:
+        cursor.execute('INSERT INTO visitors (ip) VALUES (?)', (ip,))
+        conn.commit()
+    conn.close()
+
+# عرض العدد الإجمالي
+def get_visitor_count():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('SELECT COUNT(*) FROM visitors')
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count

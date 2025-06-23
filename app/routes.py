@@ -11,6 +11,9 @@ from weasyprint import HTML
 import os
 import tempfile
 from app.visitor_tracker import count_unique_visitor
+from app.visitor_tracker import get_visitor_count
+print("📈 عدد الزوار:", get_visitor_count())
+
 
 main_blueprint = Blueprint('main', __name__)
 
