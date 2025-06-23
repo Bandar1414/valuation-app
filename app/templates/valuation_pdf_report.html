@@ -4,13 +4,32 @@
   <meta charset="UTF-8">
   <title>تقرير التقييم</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+    /* نظام الخطوط - Google Fonts كخيار أساسي مع وجود خيارات احتياطية */
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    
+    @font-face {
+      font-family: 'Cairo-Local';
+      src: local('Cairo'),
+           url('/static/fonts/Cairo-Regular.ttf') format('truetype');
+      font-weight: normal;
+    }
+    @font-face {
+      font-family: 'Cairo-Local';
+      src: local('Cairo Bold'),
+           url('/static/fonts/Cairo-Bold.ttf') format('truetype');
+      font-weight: bold;
+    }
     
     body {
-      font-family: 'Cairo', sans-serif;
-      margin: 20px;
+      font-family: 'Cairo', 'Cairo-Local', sans-serif;
+      margin: 0;
+      padding: 20px;
       direction: rtl;
       color: #333;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      background-color: #fff;
+      line-height: 1.6;
     }
     
     .header {
@@ -25,26 +44,38 @@
     .logo-section {
       display: flex;
       align-items: center;
-      gap: 30px; /* تم زيادة المسافة من 20px إلى 30px */
+      gap: 5px;
     }
     
     .logo-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      font-size: 14px;
+      font-size: 20px;
       color: #005f73;
-      font-weight: 600;
-      line-height: 1.2;
-      margin-right: 15px; /* إضافة margin-right للمزيد من المساحة */
+      font-weight: bold;
+      line-height: 1.4;
     }
     
     .logo-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #005f73;
+    }
+    
+    .logo-placeholder {
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      object-fit: cover;
-      margin-left: 15px; /* إضافة margin-left للمزيد من المساحة */
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #005f73;
+      font-weight: bold;
+      border: 2px dashed #005f73;
     }
     
     .report-title {
@@ -52,6 +83,9 @@
       color: #005f73;
       margin: 30px 0;
       font-size: 28px;
+      font-weight: bold;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
     }
     
     .section {
@@ -66,6 +100,7 @@
       border-radius: 5px;
       font-size: 20px;
       margin-bottom: 15px;
+      font-weight: bold;
     }
     
     table {
@@ -73,23 +108,27 @@
       border-collapse: collapse;
       margin: 15px 0;
       font-size: 14px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
     
     th, td {
       border: 1px solid #ddd;
-      padding: 10px;
+      padding: 12px;
       text-align: center;
     }
     
     th {
       background-color: #f2f2f2;
       font-weight: bold;
+      color: #005f73;
     }
     
     .info-box {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #eee;
     }
     
     .info-label {
@@ -126,25 +165,61 @@
       font-size: 12px;
       color: #666;
       margin-top: 30px;
-      padding: 10px;
+      padding: 15px;
       background-color: #f9f9f9;
       border-right: 3px solid #e76f51;
+      border-radius: 5px;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+      body {
+        padding: 10mm;
+        zoom: 100%;
+        font-size: 12pt;
+      }
+      .logo-img, .logo-placeholder {
+        width: 70px;
+        height: 70px;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      .disclaimer {
+        page-break-inside: avoid;
+      }
+      .footer {
+        page-break-after: always;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo-section">
-      <img src="file:///C:/Users/USER/Videos/New%20folder/app/static/images/logo.png" class="logo-img" alt="اللوغو">
-      <div class="logo-container">
-        <div>بندر العتيبي</div>
-        <div>@A1B1H</div>
+  <div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #005f73;">
+  <div style="display: flex; align-items: center; width: 60%; padding-right: 10%;">
+    {% if logo_base64 %}
+      <img src="data:image/png;base64,{{ logo_base64 }}" alt="شعار التطبيق" 
+           style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-left: 15%;">
+    {% else %}
+      <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #005f73; margin-left: 15%;">
+        LOGO
       </div>
-    </div>
-    <div>
-      <p><strong>تاريخ التقرير:</strong> {{ last_update }}</p>
+    {% endif %}
+    
+    <div style="display: flex; flex-direction: column; margin-right: -13%;">
+      <span style="font-size: 18px; font-weight: bold; color: #005f73;">بندرالعتيبي</span>
+      <span style="font-size: 15px; color: #055275; margin-top: 5px;">A1B1H@</span>
     </div>
   </div>
+  
+  <div style="width: 40%; text-align: left;">
+    <p style="margin: 0; font-size: 14px; color: #444;"><strong>تاريخ التقرير:</strong> {{ last_update }}</p>
+  </div>
+</div>
+
 
   <h1 class="report-title">تقرير تقييم شركة {{ selected_company }}</h1>
 

@@ -12,3 +12,12 @@ services:
       # تحديث pip وتثبيت الحزم بدقة
       pip install --upgrade pip
       pip install -r requirements.txt --force-reinstall --no-cache-dir
+
+services:
+  - type: static
+    name: valuation-report
+    buildCommand: echo "Static HTML - No build needed"
+    publish: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9 

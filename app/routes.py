@@ -1,5 +1,6 @@
 import base64
-from flask import Blueprint, render_template, request, flash, send_file
+import json
+from flask import Blueprint, render_template, request, flash, send_file, current_app, redirect, url_for
 from datetime import datetime
 import pandas as pd
 import locale
@@ -8,57 +9,65 @@ from app.services.valuation_service import evaluate_all_models
 from app.plotting import generate_plot
 from weasyprint import HTML
 import os
-import tempfile  # تم إضافة هذا فقط
+import tempfile
 
 main_blueprint = Blueprint('main', __name__)
 
 @main_blueprint.route('/download_pdf', methods=['POST'])
 def download_pdf():
-    import json  # أضف هذه السطر في الأعلى إذا لم يكن موجودًا
-    
-    # الحصول على البيانات من الجلسة أو من النموذج
-    selected_company = request.form.get('company', '')
-    company_details = json.loads(request.form.get('company_details', '{}'))
-    initial_inputs = json.loads(request.form.get('initial_inputs', '{}'))
-    result = json.loads(request.form.get('result', '{}'))
+    try:
+        logo_path = os.path.join(current_app.root_path, 'static', 'images', 'logo.png')
+        logo_base64 = None
 
-    
-    last_update = datetime.now().strftime('%Y-%m-%d %H:%M')
+        if os.path.exists(logo_path):
+            with open(logo_path, "rb") as image_file:
+                logo_base64 = base64.b64encode(image_file.read()).decode('utf-8')
 
-    # توليد HTML من القالب المدمج
-    rendered = render_template(
-        'valuation_pdf_report.html',
-        selected_company=selected_company,
-        company_details=company_details,
-        last_update=last_update,
-        initial_inputs=initial_inputs,
-        result=result,
-        format_currency=format_currency,
-        format_number=format_number
-    )
+        selected_company = request.form.get('company', '')
+        company_details = json.loads(request.form.get('company_details', '{}'))
+        initial_inputs = json.loads(request.form.get('initial_inputs', '{}'))
+        result = json.loads(request.form.get('result', '{}'))
+        last_update = datetime.now().strftime('%Y-%m-%d %H:%M')
 
-    # إنشاء ملف مؤقت لحفظ PDF
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_pdf:
-        pdf_path = tmp_pdf.name
+        rendered = render_template(
+            'valuation_pdf_report.html',
+            selected_company=selected_company,
+            company_details=company_details,
+            last_update=last_update,
+            initial_inputs=initial_inputs,
+            result=result,
+            format_currency=format_currency,
+            format_number=format_number,
+            logo_base64=logo_base64
+        )
 
-    # توليد PDF وحفظه في الملف المؤقت
-    pdf = HTML(string=rendered, base_url=request.root_url).write_pdf()
-    with open(pdf_path, 'wb') as f:
-        f.write(pdf)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_pdf:
+            pdf_path = tmp_pdf.name
 
-    # إرسال الملف للمستخدم مع حذف الملف بعد الإرسال
-    response = send_file(pdf_path, download_name=f'تقرير-تقييم-{selected_company}.pdf', as_attachment=True)
+        HTML(string=rendered, base_url=request.root_url).write_pdf(pdf_path)
 
-    @response.call_on_close
-    def remove_file():
-        try:
-            os.remove(pdf_path)
-        except Exception as e:
-            print(f"Error deleting temp file: {e}")
+        response = send_file(
+            pdf_path,
+            as_attachment=True,
+            download_name=f'تقرير_تقييم_{selected_company}.pdf',
+            mimetype='application/pdf'
+        )
 
-    return response
+        @response.call_on_close
+        def remove_file():
+            try:
+                os.remove(pdf_path)
+            except Exception as e:
+                current_app.logger.error(f"Error deleting temp file: {e}")
 
-# --- الكود المتبقي بدون أي تغيير ---
+        return response
+
+    except Exception as e:
+        current_app.logger.error(f"PDF Generation Error: {str(e)}")
+        flash("حدث خطأ أثناء إنشاء ملف PDF", "danger")
+        return redirect(request.referrer or url_for('main.index'))
+
+# إعداد اللغة
 try:
     locale.setlocale(locale.LC_NUMERIC, 'ar_SA.UTF-8')
 except:
@@ -180,14 +189,6 @@ def index():
                 "ri_cost_of_equity": try_float(request.form.get('ri_cost_of_equity')),
                 "relative_pe_ratio": try_float(request.form.get('relative_pe_ratio')) or 15,
             }
-
-            print("=== قيم مدخلات المستخدم ===")
-            for k, v in user_inputs.items():
-                print(f"{k}: {v}")
-            print("=== بيانات الشركة المستخدمة في التقييم ===")
-            for k, v in valuation_data.items():
-                print(f"{k}: {v}")
-            print("==========================")
 
             result = evaluate_all_models(valuation_data, user_inputs)
 
