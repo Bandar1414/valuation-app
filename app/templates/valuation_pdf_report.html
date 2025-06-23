@@ -4,10 +4,7 @@
   <meta charset="UTF-8">
   <title>تقرير التقييم</title>
   <style>
-    @font-face {
-      font-family: 'Cairo';
-      src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     
     body {
       font-family: 'Cairo', sans-serif;
@@ -27,18 +24,19 @@
     
     .logo-section {
       display: flex;
-      align-items: center;  /* يصطفون أفقيًا ويتوسطون عموديًا */
-      gap: 20px;            /* مسافة بين الصورة والنص */
+      align-items: center;
+      gap: 30px; /* تم زيادة المسافة من 20px إلى 30px */
     }
     
     .logo-container {
       display: flex;
-      flex-direction: column;  /* عمودين داخل النص */
-      justify-content: center; /* وسط عمودياً بجانب الصورة */
+      flex-direction: column;
+      justify-content: center;
       font-size: 14px;
       color: #005f73;
       font-weight: 600;
-      line-height: 1.2;       /* مسافة بين السطرين */
+      line-height: 1.2;
+      margin-right: 15px; /* إضافة margin-right للمزيد من المساحة */
     }
     
     .logo-img {
@@ -46,6 +44,7 @@
       height: 80px;
       border-radius: 50%;
       object-fit: cover;
+      margin-left: 15px; /* إضافة margin-left للمزيد من المساحة */
     }
     
     .report-title {
@@ -136,7 +135,7 @@
 <body>
   <div class="header">
     <div class="logo-section">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-img" alt="اللوغو">
+      <img src="file:///C:/Users/USER/Videos/New%20folder/app/static/images/logo.png" class="logo-img" alt="اللوغو">
       <div class="logo-container">
         <div>بندر العتيبي</div>
         <div>@A1B1H</div>
