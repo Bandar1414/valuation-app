@@ -10,10 +10,7 @@ from app.plotting import generate_plot
 from weasyprint import HTML
 import os
 import tempfile
-from app.visitor_tracker import count_unique_visitor
-from app.visitor_tracker import get_visitor_count
-print("📈 عدد الزوار:", get_visitor_count())
-
+from app.visitor_tracker import count_unique_visitor, get_visitor_count
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -155,15 +152,17 @@ def index():
     plot_url = None
     company_details = None
 
+    visitors_count = get_visitor_count()  # عدد الزوار
+
     if request.method == 'POST':
         selected_company = request.form.get('company', '').strip()
         if not selected_company:
             flash("يرجى اختيار شركة من القائمة", "warning")
-            return render_template('index.html', companies=companies, last_update=datetime.now().strftime("%Y-%m-%d %H:%M"))
+            return render_template('index.html', companies=companies, last_update=datetime.now().strftime("%Y-%m-%d %H:%M"), visitors_count=visitors_count)
 
         try:
             company_row = df[df["الشركة"].str.strip().str.lower() == selected_company.lower()].iloc[0]
-            
+
             manual_inputs = {
                 'net_income': try_float(request.form.get('manual_net_income')),
                 'shares_outstanding': try_float(request.form.get('manual_shares_outstanding')),
@@ -236,5 +235,6 @@ def index():
         last_update=datetime.now().strftime("%Y-%m-%d %H:%M"),
         format_currency=format_currency,
         format_number=format_number,
-        initial_inputs=request.form if request.method == 'POST' else {}
+        initial_inputs=request.form if request.method == 'POST' else {},
+        visitors_count=visitors_count   # تمرير عدد الزوار للقالب
     )
