@@ -3,10 +3,10 @@
     <thead class="table-light">
       <tr>
         <th>النموذج</th>
-        <th>القيمة العادلة</th>
+        <th>القيمة حسب النموذج</th>
         <th>الفرق المطلق</th>
         <th>الفرق النسبي</th>
-        <th>التقييم</th>
+        <th>التحليل حسب النموذج</th>
       </tr>
     </thead>
     <tbody>
@@ -39,11 +39,11 @@
               </td>
               <td>
                 {% if percent_diff > 10 %}
-                  <span class="badge bg-success">مقوم بأقل من قيمته</span>
+                  <span class="badge bg-success">أقل من قيمته حسب النموذج</span>
                 {% elif percent_diff < -10 %}
-                  <span class="badge bg-danger">مقوم بأعلى من قيمته</span>
+                  <span class="badge bg-danger">أعلى من قيمته حسب النموذج</span>
                 {% else %}
-                  <span class="badge bg-secondary">سعره عادل</span>
+                  <span class="badge bg-secondary">قيمة متزنة حسب النموذج</span>
                 {% endif %}
 
                 {# عرض مكرر المستخدم إذا موجود #}
@@ -56,7 +56,7 @@
         {% endfor %}
       {% else %}
         <tr>
-          <td colspan="5">لا توجد بيانات للتقييم</td>
+          <td colspan="5">لا توجد بيانات للتحليل</td>
         </tr>
       {% endif %}
     </tbody>

@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>تقرير التقييم</title>
+  <title>تقرير التحليل</title>
   <style>
     /* نظام الخطوط - Google Fonts كخيار أساسي مع وجود خيارات احتياطية */
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -221,7 +221,7 @@
 </div>
 
 
-  <h1 class="report-title">تقرير تقييم شركة {{ selected_company }}</h1>
+  <h1 class="report-title">تقرير تحليل شركة {{ selected_company }}</h1>
 
   <!-- قسم معلومات الشركة -->
   <div class="section">
@@ -319,18 +319,18 @@
   </div>
   {% endif %}
 
-  <!-- قسم نتائج التقييم -->
+  <!-- قسم نتائج التحليل -->
   <div class="section">
-    <div class="section-title">نتائج التقييم</div>
+    <div class="section-title">نتائج التحليل</div>
     {% if result is defined and result.models is defined %}
       <table>
         <thead>
           <tr>
             <th>النموذج</th>
-            <th>القيمة العادلة</th>
+            <th>القيمة حسب النموذج</th>
             <th>الفرق المطلق</th>
             <th>الفرق النسبي</th>
-            <th>التقييم</th>
+            <th>التحليل حسب النموذج</th>
           </tr>
         </thead>
         <tbody>
@@ -360,11 +360,11 @@
                 </td>
                 <td>
                   {% if percent_diff > 10 %}
-                    <span class="valuation-positive">مقوم بأقل من قيمته</span>
+                    <span class="valuation-positive">أقل من قيمته حسب النموذج</span>
                   {% elif percent_diff < -10 %}
-                    <span class="valuation-negative">مقوم بأعلى من قيمته</span>
+                    <span class="valuation-negative">أعلى من قيمته حسب النموذج</span>
                   {% else %}
-                    <span class="valuation-neutral">سعره عادل</span>
+                    <span class="valuation-neutral">قيمة متزنة حسب النموذج</span>
                   {% endif %}
 
                   {% if model_data.get('مكرر المستخدم') %}
@@ -377,7 +377,7 @@
         </tbody>
       </table>
     {% else %}
-      <p>لا توجد بيانات متاحة لنتائج التقييم</p>
+      <p>لا توجد بيانات متاحة لنتائج التحليل</p>
     {% endif %}
   </div>
 
@@ -438,7 +438,7 @@
           {% endif %}
           {% if 'relative_pe_ratio' in initial_inputs %}
           <tr>
-            <td>التقييم النسبي</td>
+            <td>التحليل النسبي</td>
             <td>مضاعف السعر/الأرباح</td>
             <td>{{ initial_inputs.relative_pe_ratio }}</td>
           </tr>
@@ -456,15 +456,17 @@
   <div class="disclaimer">
     <h3>تنويهات هامة:</h3>
     <ul>
-      <li>هذا التقرير يقدم معادلات حسابية لحساب القيمة العادلة وفقاً لمدخلات المستخدم</li>
-      <li>هذا التقرير لا يعكس القيمة الحقيقية للشركة وإنما يساعد في حساب تقييم النماذج المالية</li>
+      <li>هذا الموقع يقدم معادلات حسابية لتحليل القيمة للنماذج المالية وفقا لمدخلات المستخدم</li>
+      <li>هذا الموقع لا يعكس القيمة الحقيقة للشركة وإنما أداة تساعد في حساب النماذج المالية </li>
+      <li>البيانات المعروضة هي للأغراض تعليمية أو توعوية فقط</li>
       <li>جميع المعلومات المالية للشركات مصدرها موقع تداول السعودية</li>
-      <li>هذا التقرير لا يقدم أي توصية شراء أو بيع للشركات</li>
+      <li>هذا الموقع لا يقدم أي توصية شراء أو بيع للشركات</li>
+      <li>هذا الموقع لا يمثل تداول السعودية أو جهة رسمية</li>
     </ul>
   </div>
 
   <div class="footer">
-    <p>تم إنشاء هذا التقرير بواسطة تطبيق تقييم الأسهم السعودية</p>
+    <p>تم إنشاء هذا التقرير بواسطة تطبيق تحليل الأسهم السعودية</p>
     <p>جميع الحقوق محفوظة &copy; {{ last_update[:4] }} - بندر العتيبي @A1B1H</p>
   </div>
 </body>

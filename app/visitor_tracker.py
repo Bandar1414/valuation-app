@@ -1,38 +1,51 @@
-import sqlite3
+import json
+import os
 from flask import request
+from datetime import datetime
 
-DB_FILE = 'visitors.db'
+TMP_DIR = 'tmp'
+VISITORS_FILE = os.path.join(TMP_DIR, 'visitors.json')
+os.makedirs(TMP_DIR, exist_ok=True)
 
-# إنشاء الجدول لو لم يكن موجودًا
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS visitors (
-            ip TEXT PRIMARY KEY,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    conn.commit()
-    conn.close()
+def load_visitors():
+    if os.path.exists(VISITORS_FILE):
+        with open(VISITORS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {
+        "total_visits": 0,
+        "ips": {}
+    }
 
-# تسجيل الزائر الفريد
+def save_visitors(data):
+    with open(VISITORS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
 def count_unique_visitor():
+    data = load_visitors()
     ip = request.remote_addr
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('SELECT 1 FROM visitors WHERE ip = ?', (ip,))
-    exists = cursor.fetchone()
-    if not exists:
-        cursor.execute('INSERT INTO visitors (ip) VALUES (?)', (ip,))
-        conn.commit()
-    conn.close()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# عرض العدد الإجمالي
+    if ip not in data["ips"]:
+        data["ips"][ip] = {
+            "first_visit": now,
+            "visits": 1,
+            "last_visit": now
+        }
+    else:
+        data["ips"][ip]["visits"] += 1
+        data["ips"][ip]["last_visit"] = now
+
+    data["total_visits"] += 1
+    save_visitors(data)
+
 def get_visitor_count():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM visitors')
-    count = cursor.fetchone()[0]
-    conn.close()
-    return count
+    data = load_visitors()
+    return len(data["ips"])
+
+def get_total_visits():
+    data = load_visitors()
+    return data.get("total_visits", 0)
+
+def get_all_visitors():
+    data = load_visitors()
+    return data["ips"]

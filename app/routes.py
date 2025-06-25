@@ -10,7 +10,12 @@ from app.plotting import generate_plot
 from weasyprint import HTML
 import os
 import tempfile
-from app.visitor_tracker import count_unique_visitor, get_visitor_count
+from app.visitor_tracker import count_unique_visitor, get_visitor_count, get_total_visits
+
+# في أي دالة:
+visitors_count = get_visitor_count()
+total_visits = get_total_visits()
+
 
 main_blueprint = Blueprint('main', __name__)
 
