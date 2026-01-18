@@ -8,3 +8,6 @@ weasyprint==65.1
 pydyf==0.11.0  # تأكد من عدم وجود مسافات قبل/بعد ==
 cairocffi==1.6.0
 cffi==1.15.1
+setuptools>=70
+wheel
+pip>=25
